@@ -1,0 +1,7 @@
+#+TITLE: Deploy time network policy diagrams
+#+AUTHOR: James Blair
+#+DATE: <2025-02-05 Wed>
+
+This repository serves as an example of how Red Hat Advanced Cluster Security can be used to automatically create network policy diagrams and make these available in a pull request prior to a deployment taking place.
+
+This repository has two branches ~main~ representing development and ~production~.
