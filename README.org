@@ -5,3 +5,40 @@
 This repository serves as an example of how Red Hat Advanced Cluster Security can be used to automatically create network policy diagrams and make these available in a pull request prior to a deployment taking place.
 
 This repository has two branches ~main~ representing development and ~production~.
+
+Below is an OpenShift GitOps ~ApplicationSet~ which will
+
+#+begin_src tmux
+cat << EOF | oc apply --filename -
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: rhacs-netpol-diagrams
+  namespace: openshift-gitops
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - git:
+        repoURL: https://github.com/jmhbnz/rhacs-netpol-diagrams.git
+        revision: main
+        directories:
+          - path: clusters/prd-hub/*
+  template:
+    metadata:
+      name: '{{.path.basename}}'
+    spec:
+      project: "default"
+      source:
+        repoURL: https://github.com/jmhbnz/rhacs-netpol-diagrams.git
+        targetRevision: main
+        path: '{{.path.path}}'
+      destination:
+        server: https://kubernetes.default.svc
+      syncPolicy:
+        automated:
+          prune: true
+        syncOptions:
+          - CreateNamespace=true
+EOF
+#+end_src
